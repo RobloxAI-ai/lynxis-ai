@@ -261,49 +261,94 @@ elif menu == "Upgrade ⚡":
     )
     
     st.caption("Secure payment processed via Buy Me a Coffee Gateway")
-# --- 7. LEGAL ENGINE (REAL POLICIES) ---
-# Create a simple "Page" detector for the legal documents
-if "page" not in st.session_state:
-    st.session_state.page = "main"
+# --- 7. PRO-LEGAL ENGINE (REAL POLICIES) ---
 
-# Function to show the policies
+# Function to show the policies with "Tall" Professional Layout
 def show_legal(type):
-    st.markdown(f"<h1 class='hero-title'>{type.upper()}</h1>", unsafe_allow_html=True)
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    # CSS for the "Tall" look
+    st.markdown("""
+        <style>
+            .legal-box {
+                padding: 60px 40px; 
+                min-height: 70vh; 
+                line-height: 1.8;
+                font-family: 'Inter', sans-serif;
+            }
+            .legal-title {
+                font-size: 50px;
+                letter-spacing: 5px;
+                margin-bottom: 40px;
+                color: #00f2fe;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    st.markdown(f"<h1 class='legal-title'>{type.upper()}</h1>", unsafe_allow_html=True)
+    st.markdown('<div class="glass-card legal-box">', unsafe_allow_html=True)
+    
     if type == "Terms of Service":
-        st.write("""
-        **1. Acceptance of Terms:** By using LYNXIS, you agree to these protocols.
-        **2. Prohibited Use:** You may not use LYNXIS for phishing, malware, or illegal content. We reserve the right to terminate any Node that violates security.
-        **3. Liability:** LYNXIS is a redirection tool. We are not responsible for the destination content of any user-generated link.
-        **4. Termination:** VIP status is a service agreement and can be revoked for TOS violations.
-        """)
+        st.markdown(f"""
+        ### 1. ACCEPTANCE OF PROTOCOL
+        By accessing the LYNXIS Infrastructure, you agree to be bound by these Terms of Service and all applicable laws and regulations.
+        
+        ### 2. PROHIBITED USAGE
+        You are strictly prohibited from using LYNXIS for:
+        * Phishing or deceptive practices.
+        * Distribution of malware or viruses.
+        * Any activity that violates the laws of your jurisdiction.
+        
+        ### 3. INFRASTRUCTURE LIMITATIONS
+        LYNXIS is a redirection service. We do not host, control, or verify the content of the destination URLs. Use at your own risk.
+        
+        ### 4. VIP MEMBERSHIP
+        Subscriptions are billed via Buy Me a Coffee. We reserve the right to terminate access for any account found violating security protocols without refund.
+        
+        <br><br>
+        *Last Updated: February 2026*
+        """, unsafe_allow_html=True)
     else:
-        st.write("""
-        **1. Data Collection:** We collect your Google Email and Name for authentication only.
-        **2. Link Tracking:** We log click counts to provide analytics to the Node creator.
-        **3. Payments:** All financial data is handled by Buy Me a Coffee/Stripe. LYNXIS never sees your card details.
-        **4. Data Deletion:** You can request a full data wipe via the Settings panel at any time.
-        """)
-    if st.button("RETURN TO INTERFACE"):
-        st.session_state.page = "main"
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.stop() # Stops the rest of the app from showing behind the legal text
+        st.markdown(f"""
+        ### 1. DATA COLLECTION
+        We collect minimal data required for operation: Google Email, Name, and Profile Picture. 
+        
+        ### 2. ANALYTICS DATA
+        We track click counts and timestamps for Nodes created on our platform to provide creator analytics.
+        
+        ### 3. THIRD-PARTY SERVICES
+        Payment information is never stored on our servers. All transactions are handled securely by Stripe/Buy Me a Coffee.
+        
+        ### 4. YOUR RIGHTS
+        You may request a complete data purge via the Settings panel or by contacting our infrastructure lead at **ai.websno@gmail.com**.
+        
+        <br><br>
+        *Privacy Shield: Active*
+        """, unsafe_allow_html=True)
 
-# Logic to trigger the legal pages
-query_params = st.query_params
-if query_params.get("view") == "terms":
+    # FIXED RETURN BUTTON: This clears the URL params to take you home
+    if st.button("← RETURN TO INTERFACE", use_container_width=True):
+        st.query_params.clear()
+        st.rerun()
+        
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.stop() 
+
+# --- DETECTION LOGIC ---
+params = st.query_params
+if params.get("view") == "terms":
     show_legal("Terms of Service")
-if query_params.get("view") == "privacy":
+elif params.get("view") == "privacy":
     show_legal("Privacy Policy")
 
-# --- THE FOOTER ---
-st.markdown("---")
+# --- THE TALL FOOTER ---
+st.markdown("<br><br><br>", unsafe_allow_html=True) # Extra spacing
 st.markdown(f"""
-<div style="text-align: center; padding: 20px; color: gray; font-size: 12px; opacity: 0.7;">
-    © 2026 LYNXIS INFRASTRUCTURE | 
-    <a href="?view=terms" target="_self" style="color:#4facfe;">Terms of Service</a> | 
-    <a href="?view=privacy" target="_self" style="color:#4facfe;">Privacy Policy</a> | 
-    <a href="mailto:dali.snouda@gmail.com" style="color:#4facfe;">Contact Support</a>
+<div style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 50px;">
+    <p style="color: #555; font-size: 14px; letter-spacing: 2px;">LYNXIS CORE INFRASTRUCTURE</p>
+    <div style="margin: 20px 0;">
+        <a href="?view=terms" target="_self" style="color:#4facfe; text-decoration:none; margin:0 15px;">Terms of Service</a>
+        <a href="?view=privacy" target="_self" style="color:#4facfe; text-decoration:none; margin:0 15px;">Privacy Policy</a>
+        <a href="mailto:ai.websno@gmail.com" style="color:#4facfe; text-decoration:none; margin:0 15px;">Contact Support</a>
+    </div>
+    <p style="color: #333; font-size: 10px;">© 2026 LYNXIS SYSTEMS. ALL RIGHTS RESERVED.</p>
 </div>
 """, unsafe_allow_html=True)
