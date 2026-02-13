@@ -249,33 +249,18 @@ elif menu == "Upgrade ⚡":
             </ul>
         </div>''', unsafe_allow_html=True)
     
-    # --- THE MISSING LINK BUTTON ---
+    # --- THE GUARANTEED BUTTON ---
     if not user_db_data['is_premium']:
-        st.write("") # Spacing
-        st.markdown(f"""
-            <div style="display: flex; justify-content: center; margin-top: 30px;">
-                <a href="https://www.buymeacoffee.com/lynxis.ai/membership" target="_blank" style="text-decoration: none; width: 100%;">
-                    <div style="
-                        background: #ffffff;
-                        color: #000000;
-                        text-align: center;
-                        padding: 22px;
-                        border-radius: 16px;
-                        font-weight: 900;
-                        font-size: 24px;
-                        border: 2px solid #ffffff;
-                        box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-                        transition: transform 0.2s ease;
-                    ">
-                        💳 PAY VIA CARD PAYMENT
-                    </div>
-                </a>
-            </div>
-            <p style="text-align:center; color:gray; font-size:13px; margin-top:15px; opacity: 0.7;">
-                Redirecting to secure Buy Me a Coffee checkout...
-            </p>
-        """, unsafe_allow_html=True)
+        st.write("---") # Visual separator
+        
+        # We use st.link_button because it is unblockable by the UI
+        st.link_button(
+            "💳 PAY VIA CARD PAYMENT", 
+            "https://www.buymeacoffee.com/lynxis.ai/membership", 
+            type="primary", 
+            use_container_width=True
+        )
+        
+        st.caption("Secure payment processed via Buy Me a Coffee Gateway")
     else:
-        st.markdown('<div class="glass-card" style="text-align:center; border-color:#00f2fe;">', unsafe_allow_html=True)
-        st.success("✨ LYNXIS VIP PROTOCOL ACTIVE - ALL SYSTEMS GO")
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.success("✨ LYNXIS VIP PROTOCOL ACTIVE")
