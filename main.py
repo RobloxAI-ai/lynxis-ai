@@ -256,7 +256,7 @@ elif menu == "Upgrade ⚡":
 
     st.link_button(
         "💳 PAY VIA CARD PAYMENT", 
-        "https://www.buymeacoffee.com/lynxisai/membership", 
+        "https://www.buymeacoffee.com/lynxis.ai/membership", 
         use_container_width=True
     )
     
