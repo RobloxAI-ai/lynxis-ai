@@ -217,50 +217,47 @@ elif menu == "Settings":
 elif menu == "Upgrade ⚡":
     st.markdown("<h1 class='hero-title'>EVOLVE</h1>", unsafe_allow_html=True)
     
-    # --- DUAL TOGGLE LOGIC ---
+    # --- DUAL TOGGLE ---
     plan_type = st.radio("SELECT BILLING CYCLE", ["Monthly", "Yearly (Save 20%)"], horizontal=True)
     price = "29" if "Monthly" in plan_type else "279"
     period = "mo" if "Monthly" in plan_type else "yr"
 
     col1, col2 = st.columns(2)
-    
     with col1:
-        st.markdown(f'''<div class="glass-card {'selected-plan' if not user_db_data['is_premium'] else ''}">
+        st.markdown(f'''<div class="glass-card">
             <h3 style="color:gray;">STANDARD</h3>
             <h1 style="margin:0;">$0</h1>
-            <p style="font-size:14px; color:rgba(255,255,255,0.6);">Current access level</p>
-            <ul style="font-size:14px; margin-top:10px;">
-                <li>5 Active Nodes</li>
-                <li>Randomly Generated Slugs</li>
-                <li>Standard Support</li>
-            </ul>
+            <ul style="font-size:14px; margin-top:10px;"><li>5 Active Nodes</li><li>Standard Slugs</li></ul>
         </div>''', unsafe_allow_html=True)
-        
     with col2:
-        st.markdown(f'''<div class="glass-card {'selected-plan' if user_db_data['is_premium'] else ''}">
-            <h3 style="color:#00f2fe;">PREMIUM INFRASTRUCTURE</h3>
+        st.markdown(f'''<div class="glass-card" style="border-color:#00f2fe;">
+            <h3 style="color:#00f2fe;">PREMIUM</h3>
             <h1 style="margin:0;">${price}<small style="font-size:15px;">/{period}</small></h1>
-            <p style="font-size:14px; color:rgba(255,255,255,0.6);">Full Enterprise Protocol</p>
-            <ul style="font-size:14px; margin-top:10px;">
-                <li>Unlimited Active Nodes</li>
-                <li>Custom Branded Slugs (VIP)</li>
-                <li>Global Analytics Dashboard</li>
-                <li>Priority Deployment Speeds</li>
-            </ul>
+            <ul style="font-size:14px; margin-top:10px;"><li>Unlimited Nodes</li><li>Custom Slugs</li></ul>
         </div>''', unsafe_allow_html=True)
     
-    # --- THE GUARANTEED BUTTON ---
-    if not user_db_data['is_premium']:
-        st.write("---") # Visual separator
-        
-        # We use st.link_button because it is unblockable by the UI
-        st.link_button(
-            "💳 PAY VIA CARD PAYMENT", 
-            "https://www.buymeacoffee.com/lynxis.ai/membership", 
-            type="primary", 
-            use_container_width=True
-        )
-        
-        st.caption("Secure payment processed via Buy Me a Coffee Gateway")
-    else:
-        st.success("✨ LYNXIS VIP PROTOCOL ACTIVE")
+    st.write("---")
+
+    # --- THE FORCE-VISIBLE BUTTON ---
+    # We are putting this OUTSIDE of any 'if' statements so it has to show up.
+    st.markdown("""
+        <style>
+            .stLinkButton > a {
+                background: linear-gradient(45deg, #FFDD00, #FBB03B) !important;
+                color: black !important;
+                font-weight: 900 !important;
+                font-size: 20px !important;
+                border: none !important;
+                padding: 20px !important;
+                box-shadow: 0 0 20px rgba(255, 221, 0, 0.4) !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.link_button(
+        "💳 PAY VIA CARD PAYMENT", 
+        "https://www.buymeacoffee.com/lynxisai/membership", 
+        use_container_width=True
+    )
+    
+    st.caption("Secure payment processed via Buy Me a Coffee Gateway")
