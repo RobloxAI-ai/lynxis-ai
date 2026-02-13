@@ -3,7 +3,20 @@ import pandas as pd
 from supabase import create_client
 import random, string, time
 from datetime import datetime, timedelta, timezone
+st.set_page_config(
+    page_title="LYNXIS AI | URL Infrastructure",
+    page_icon="🚀",
+    layout="wide"
+)
 
+# Hidden SEO metadata for Google Bots
+st.markdown("""
+    <div style="display:none;">
+        <h1>Lynxis AI</h1>
+        <p>Professional URL shortening, Node management, and Infrastructure for Discord.</p>
+        <p>Created by Dali Snouda. High-speed redirection and analytics.</p>
+    </div>
+""", unsafe_allow_html=True)
 # --- 1. MAXIMUM NEBULA UI & ADVANCED ENTERPRISE CSS ---
 st.set_page_config(page_title="LYNXIS AI | Global Infrastructure", page_icon="🔗", layout="wide")
 
