@@ -55,9 +55,7 @@ def init_db():
     return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
 supabase = init_db()
 
-# --- 3. REDIRECT LOGIC (TOTAL OVERLOAD) ---
-import streamlit.components.v1 as components
-
+# --- 3. REDIRECT LOGIC (PORTAL VERSION) ---
 query_params = st.query_params
 if "c" in query_params:
     target_slug = query_params["c"]
@@ -73,27 +71,24 @@ if "c" in query_params:
         new_clicks = (node.get("clicks") or 0) + 1
         supabase.table("links").update({"clicks": new_clicks}).eq("short_code", target_slug).execute()
         
-        # METHOD 1 & 2: Triple-threat JavaScript + Meta Fallback
-        components.html(f"""
-            <script>
-                // Try parent first
-                window.parent.location.href = "{target_url}";
-                // Try top if parent fails
-                window.top.location.href = "{target_url}";
-                // Force replacement
-                window.location.replace("{target_url}");
-            </script>
-            <meta http-equiv="refresh" content="0;url={target_url}">
-        """, height=0)
-        
-        # METHOD 3: Visual Link (If everything else is blocked by the browser)
+        # --- THE PORTAL UI (Bypasses "Refused to Connect") ---
         st.markdown(f"""
-            <div style="text-align:center; margin-top:50px;">
-                <h2 style="color:#00f2fe;">NODE DEPLOYED</h2>
-                <p>If you aren't redirected in 2 seconds, click below:</p>
-                <a href="{target_url}" target="_self" style="color:#4facfe; font-weight:bold; text-decoration:none; font-size:20px;">
-                    🚀 CLICK TO ENTER NODE
-                </a>
+            <div style="text-align:center; padding:50px; background:rgba(255,255,255,0.05); border-radius:20px; border:1px solid #4facfe;">
+                <h1 style="color:#00f2fe; font-size:40px;">NODE READY</h1>
+                <p style="color:#ffffff; font-size:18px;">Security protocols cleared. Open the gateway below:</p>
+                <br>
+                <a href="{target_url}" target="_blank" style="
+                    background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+                    color: white;
+                    padding: 15px 40px;
+                    text-decoration: none;
+                    border-radius: 12px;
+                    font-weight: bold;
+                    font-size: 22px;
+                    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+                ">🚀 ENTER PORTAL</a>
+                <br><br>
+                <p style="color:gray; font-size:12px;">Link: {target_url}</p>
             </div>
         """, unsafe_allow_html=True)
         st.stop()
