@@ -204,3 +204,63 @@ elif menu == "Admin Master Control" and is_admin:
     if st.button("ACTIVATE VIP"):
         supabase.table("users").update({"is_premium": True, "credits": 9999, "pending_upgrade": False}).eq("email", t_email).execute()
         st.success("User Elevated to VIP.")
+# --- RESTORE: SETTINGS & UPGRADE ---
+elif menu == "Settings":
+    st.markdown("<h1 class='hero-title'>SETTINGS</h1>", unsafe_allow_html=True)
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.write(f"**Connected Email:** {u_email}")
+    st.write(f"**Account Status:** {'💎 VIP' if user_db_data['is_premium'] else 'Standard'}")
+    if st.button("Request Data Wipe"):
+        st.warning("Contact Dali to delete infrastructure nodes.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+elif menu == "Upgrade ⚡":
+    st.markdown("<h1 class='hero-title'>EVOLVE</h1>", unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown(f'''<div class="glass-card {'selected-plan' if not user_db_data['is_premium'] else ''}">
+            <h3 style="color:gray;">STANDARD</h3>
+            <h1 style="margin:0;">$0</h1>
+            <p style="font-size:14px; color:rgba(255,255,255,0.6);">Current access level</p>
+            <ul style="font-size:14px; margin-top:10px;">
+                <li>5 Active Nodes</li>
+                <li>Standard Random Slugs</li>
+                <li>Basic Analytics</li>
+            </ul>
+        </div>''', unsafe_allow_html=True)
+        
+    with col2:
+        st.markdown(f'''<div class="glass-card {'selected-plan' if user_db_data['is_premium'] else ''}">
+            <h3 style="color:#00f2fe;">PREMIUM</h3>
+            <h1 style="margin:0;">$10<small style="font-size:15px;">/mo</small></h1>
+            <p style="font-size:14px; color:rgba(255,255,255,0.6);">Professional Infrastructure</p>
+            <ul style="font-size:14px; margin-top:10px;">
+                <li>Unlimited Active Nodes</li>
+                <li>Custom Branded Slugs</li>
+                <li>Priority Node Deployment</li>
+                <li>Advanced Analytics Dashboard</li>
+            </ul>
+        </div>''', unsafe_allow_html=True)
+    
+    # --- THIS IS THE EXACT BUY ME A COFFEE REDIRECT ---
+    if not user_db_data['is_premium']:
+        st.markdown("""
+            <a href="https://www.buymeacoffee.com/lynxis.ai/membership" target="_blank" style="text-decoration:none;">
+                <div style="
+                    background: linear-gradient(45deg, #FFDD00 0%, #FBB03B 100%);
+                    color: black;
+                    text-align: center;
+                    padding: 15px;
+                    border-radius: 14px;
+                    font-weight: 900;
+                    font-size: 18px;
+                    margin-top: 20px;
+                    box-shadow: 0 4px 15px rgba(255, 221, 0, 0.3);
+                ">
+                    ⚡ UPGRADE TO VIP VIA CARD PAYMENT
+                </div>
+            </a>
+        """, unsafe_allow_html=True)
+    else:
+        st.success("✨ Your VIP status is active. Infrastructure running at 100% capacity.")
