@@ -261,43 +261,49 @@ elif menu == "Upgrade ⚡":
     )
     
     st.caption("Secure payment processed via Buy Me a Coffee Gateway")
-# --- 7. LEGAL FOOTER & COMPLIANCE ---
-st.markdown("---") # Visual break before the footer
+# --- 7. LEGAL ENGINE (REAL POLICIES) ---
+# Create a simple "Page" detector for the legal documents
+if "page" not in st.session_state:
+    st.session_state.page = "main"
 
-legal_footer = """
-<style>
-    .footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background-color: rgba(10, 10, 15, 0.9);
-        color: #555;
-        text-align: center;
-        padding: 10px;
-        font-size: 12px;
-        border-top: 1px solid rgba(255,255,255,0.05);
-        z-index: 100;
-    }
-    .footer a {
-        color: #4facfe;
-        text-decoration: none;
-        margin: 0 10px;
-    }
-</style>
-<div class="footer">
-    <span>© 2026 LYNXIS INFRASTRUCTURE</span>
-    <a href="#terms">Terms of Service</a> | 
-    <a href="#privacy">Privacy Policy</a> | 
-    <a href="mailto:dali.snouda@gmail.com">Contact Support</a>
-    <br>
-    <span style="font-size:10px; opacity:0.6;">
-        LYNXIS is a URL management tool. We are not responsible for the content of external links.
-    </span>
+# Function to show the policies
+def show_legal(type):
+    st.markdown(f"<h1 class='hero-title'>{type.upper()}</h1>", unsafe_allow_html=True)
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    if type == "Terms of Service":
+        st.write("""
+        **1. Acceptance of Terms:** By using LYNXIS, you agree to these protocols.
+        **2. Prohibited Use:** You may not use LYNXIS for phishing, malware, or illegal content. We reserve the right to terminate any Node that violates security.
+        **3. Liability:** LYNXIS is a redirection tool. We are not responsible for the destination content of any user-generated link.
+        **4. Termination:** VIP status is a service agreement and can be revoked for TOS violations.
+        """)
+    else:
+        st.write("""
+        **1. Data Collection:** We collect your Google Email and Name for authentication only.
+        **2. Link Tracking:** We log click counts to provide analytics to the Node creator.
+        **3. Payments:** All financial data is handled by Buy Me a Coffee/Stripe. LYNXIS never sees your card details.
+        **4. Data Deletion:** You can request a full data wipe via the Settings panel at any time.
+        """)
+    if st.button("RETURN TO INTERFACE"):
+        st.session_state.page = "main"
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.stop() # Stops the rest of the app from showing behind the legal text
+
+# Logic to trigger the legal pages
+query_params = st.query_params
+if query_params.get("view") == "terms":
+    show_legal("Terms of Service")
+if query_params.get("view") == "privacy":
+    show_legal("Privacy Policy")
+
+# --- THE FOOTER ---
+st.markdown("---")
+st.markdown(f"""
+<div style="text-align: center; padding: 20px; color: gray; font-size: 12px; opacity: 0.7;">
+    © 2026 LYNXIS INFRASTRUCTURE | 
+    <a href="?view=terms" target="_self" style="color:#4facfe;">Terms of Service</a> | 
+    <a href="?view=privacy" target="_self" style="color:#4facfe;">Privacy Policy</a> | 
+    <a href="mailto:dali.snouda@gmail.com" style="color:#4facfe;">Contact Support</a>
 </div>
-"""
-st.markdown(legal_footer, unsafe_allow_html=True)
-
-# Simple Legal Pop-ups (If they click the links)
-if st.query_params.get("view") == "terms":
-    st.info("### Terms of Service: LYNXIS is for lawful use only. Users are responsible for all redirected content.")
+""", unsafe_allow_html=True)
