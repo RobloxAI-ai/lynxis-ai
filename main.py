@@ -79,7 +79,12 @@ if "c" in params:
     else:
         st.error("Invalid Node! This link doesn't exist.")
         st.stop()
+# --- ADD THIS RIGHT ABOVE THE DEPLOY BUTTON ---
+can_deploy = user_db_data['is_premium'] or (user_db_data['credits'] > 0)
 
+# The button code follows:
+if st.button("DEPLOY NODE", use_container_width=True, disabled=not (can_deploy and t_url)):
+    # ... rest of the code ...
 # --- 2. DEPLOYMENT FIX (Around line 160) ---
 if st.button("DEPLOY NODE", use_container_width=True, disabled=not (can_deploy and t_url)):
     # Clean the URL before saving
