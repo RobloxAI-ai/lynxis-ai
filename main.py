@@ -55,7 +55,9 @@ def init_db():
     return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
 supabase = init_db()
 
-# --- 3. REDIRECT LOGIC (FIXED ENGINE) ---
+# --- 3. REDIRECT LOGIC (ULTIMATE BYPASS) ---
+import streamlit.components.v1 as components # Add this line if not at the top
+
 query_params = st.query_params
 if "c" in query_params:
     target_slug = query_params["c"]
@@ -64,24 +66,22 @@ if "c" in query_params:
     if response.data:
         node = response.data[0]
         target_url = node["original_url"]
-        
         if not target_url.startswith(("http://", "https://")):
             target_url = "https://" + target_url
             
         new_clicks = (node.get("clicks") or 0) + 1
         supabase.table("links").update({"clicks": new_clicks}).eq("short_code", target_slug).execute()
         
-        # --- THIS IS THE PART THAT CRASHED ---
-        # Make sure the st.markdown and the triple quotes are exactly like this:
-        st.markdown(f"""
+        # This FORCES the browser to jump immediately
+        components.html(f"""
             <script>
                 window.parent.location.href = "{target_url}";
             </script>
-        """, unsafe_allow_html=True)
-        st.write(f"✨ Breaking through to: {target_slug}...")
+        """, height=0)
+        
+        st.markdown(f"### ✨ Launching Node: {target_slug}...")
         st.stop()
-    else:
-        st.error("Invalid Node! This link doesn't exist.")
+        
 # --- 4. UNIVERSAL IDENTITY GATEKEEPER ---
 u_logged_in = False
 u_email = ""
