@@ -72,13 +72,14 @@ if "c" in query_params:
         new_clicks = (node.get("clicks") or 0) + 1
         supabase.table("links").update({"clicks": new_clicks}).eq("short_code", target_slug).execute()
         
-        # JUMP TO DESTINATION
-        st.markdown(f'<meta http-equiv="refresh" content="0;url={target_url}">', unsafe_allow_html=True)
-        st.write(f"🚀 Redirecting to {target_slug}...")
-        st.stop()
-    else:
-        st.error("Invalid Node! This link doesn't exist in the LYNXIS infrastructure.")
-
+       # JUMP TO DESTINATION (Security Bypass Version)
+st.markdown(f"""
+    <script>
+        window.parent.location.href = "{target_url}";
+    </script>
+""", unsafe_allow_html=True)
+st.write(f"✨ Breaking through to: {target_slug}...")
+st.stop()
 # --- 4. UNIVERSAL IDENTITY GATEKEEPER ---
 u_logged_in = False
 u_email = ""
