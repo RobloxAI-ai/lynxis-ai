@@ -55,8 +55,8 @@ def init_db():
     return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
 supabase = init_db()
 
-# --- 3. REDIRECT LOGIC (ULTIMATE BYPASS) ---
-import streamlit.components.v1 as components # Add this line if not at the top
+# --- 3. REDIRECT LOGIC (TOTAL OVERLOAD) ---
+import streamlit.components.v1 as components
 
 query_params = st.query_params
 if "c" in query_params:
@@ -69,17 +69,33 @@ if "c" in query_params:
         if not target_url.startswith(("http://", "https://")):
             target_url = "https://" + target_url
             
+        # Update Click Counter
         new_clicks = (node.get("clicks") or 0) + 1
         supabase.table("links").update({"clicks": new_clicks}).eq("short_code", target_slug).execute()
         
-        # This FORCES the browser to jump immediately
+        # METHOD 1 & 2: Triple-threat JavaScript + Meta Fallback
         components.html(f"""
             <script>
+                // Try parent first
                 window.parent.location.href = "{target_url}";
+                // Try top if parent fails
+                window.top.location.href = "{target_url}";
+                // Force replacement
+                window.location.replace("{target_url}");
             </script>
+            <meta http-equiv="refresh" content="0;url={target_url}">
         """, height=0)
         
-        st.markdown(f"### ✨ Launching Node: {target_slug}...")
+        # METHOD 3: Visual Link (If everything else is blocked by the browser)
+        st.markdown(f"""
+            <div style="text-align:center; margin-top:50px;">
+                <h2 style="color:#00f2fe;">NODE DEPLOYED</h2>
+                <p>If you aren't redirected in 2 seconds, click below:</p>
+                <a href="{target_url}" target="_self" style="color:#4facfe; font-weight:bold; text-decoration:none; font-size:20px;">
+                    🚀 CLICK TO ENTER NODE
+                </a>
+            </div>
+        """, unsafe_allow_html=True)
         st.stop()
         
 # --- 4. UNIVERSAL IDENTITY GATEKEEPER ---
