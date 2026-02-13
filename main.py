@@ -79,16 +79,27 @@ if "c" in query_params:
     else:
         st.error("Invalid Node! This link doesn't exist in the LYNXIS infrastructure.")
 
-# --- 4. IDENTITY & LOGIN GATEKEEPER ---
-try: is_local = "localhost" in st.context.headers.get("host", "localhost")
-except: is_local = True
+# --- 4. UNIVERSAL IDENTITY GATEKEEPER ---
+u_logged_in = False
+u_email = ""
+u_name = "User"
 
-if is_local:
+# Try every possible version of the Streamlit User command
+try:
+    if hasattr(st, "user") and st.user.get("is_logged_in"):
+        u_logged_in = True
+        u_email = st.user.get("email", "").lower()
+        u_name = st.user.get("name", "User")
+    elif hasattr(st, "experimental_user") and st.experimental_user.get("is_logged_in"):
+        u_logged_in = True
+        u_email = st.experimental_user.get("email", "").lower()
+        u_name = st.experimental_user.get("name", "User")
+except:
+    pass
+
+# Force login for the owner (You) if testing locally
+if "localhost" in str(st.context.headers.get("host", "")):
     u_email, u_name, u_logged_in = "dali.snouda@gmail.com", "Dali (Owner)", True
-else:
-    u_logged_in = st.experimental_user.get("is_logged_in", False)
-    u_email = st.experimental_user.get("email", "").lower() if u_logged_in else ""
-    u_name = st.experimental_user.get("name", "User")
 
 if not u_logged_in:
     st.markdown("<div style='height:10vh;'></div><h1 class='hero-title'>LYNXIS</h1>", unsafe_allow_html=True)
@@ -96,16 +107,9 @@ if not u_logged_in:
     with col:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         st.subheader("Infrastructure Verification")
-        with st.expander("📄 Privacy Policy & Data Handling"):
-            st.markdown('<div class="legal-scroll"><b>PRIVACY POLICY</b><br>1. DATA COLLECTION: We collect email data via Google OAuth...<br>2. SECURITY: All data is hosted on Supabase...<br>(Full Enterprise legal text active)</div>', unsafe_allow_html=True)
-        with st.expander("⚖️ Terms of Service"):
-            st.markdown('<div class="legal-scroll"><b>TERMS OF SERVICE</b><br>1. USAGE: Free users receive 5 persistent credits...<br>2. PROHIBITED: No phishing or malware distribution...<br>(Full Enterprise legal text active)</div>', unsafe_allow_html=True)
-        st.divider()
-        agree_tos = st.checkbox("Accept Terms of Service")
-        agree_priv = st.checkbox("Accept Privacy Policy")
-        if st.button("AUTHENTICATE WITH GOOGLE", use_container_width=True, disabled=not (agree_tos and agree_priv)):
-            try: st.login()
-            except Exception as e: st.error(f"Configuration Error: {e}")
+        agree = st.checkbox("I accept the LYNXIS Protocols")
+        if st.button("AUTHENTICATE WITH GOOGLE", use_container_width=True, disabled=not agree):
+            st.login()
         st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
