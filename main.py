@@ -216,6 +216,12 @@ elif menu == "Settings":
 
 elif menu == "Upgrade ⚡":
     st.markdown("<h1 class='hero-title'>EVOLVE</h1>", unsafe_allow_html=True)
+    
+    # --- DUAL TOGGLE LOGIC ---
+    plan_type = st.radio("SELECT BILLING CYCLE", ["Monthly", "Yearly (Save 20%)"], horizontal=True)
+    price = "29" if "Monthly" in plan_type else "279" # Adjusted for yearly discount
+    period = "mo" if "Monthly" in plan_type else "yr"
+
     col1, col2 = st.columns(2)
     
     with col1:
@@ -225,42 +231,48 @@ elif menu == "Upgrade ⚡":
             <p style="font-size:14px; color:rgba(255,255,255,0.6);">Current access level</p>
             <ul style="font-size:14px; margin-top:10px;">
                 <li>5 Active Nodes</li>
-                <li>Standard Random Slugs</li>
-                <li>Basic Analytics</li>
+                <li>Randomly Generated Slugs</li>
+                <li>Standard Support</li>
             </ul>
         </div>''', unsafe_allow_html=True)
         
     with col2:
         st.markdown(f'''<div class="glass-card {'selected-plan' if user_db_data['is_premium'] else ''}">
-            <h3 style="color:#00f2fe;">PREMIUM</h3>
-            <h1 style="margin:0;">$10<small style="font-size:15px;">/mo</small></h1>
-            <p style="font-size:14px; color:rgba(255,255,255,0.6);">Professional Infrastructure</p>
+            <h3 style="color:#00f2fe;">PREMIUM INFRASTRUCTURE</h3>
+            <h1 style="margin:0;">${price}<small style="font-size:15px;">/{period}</small></h1>
+            <p style="font-size:14px; color:rgba(255,255,255,0.6);">Full Enterprise Protocol</p>
             <ul style="font-size:14px; margin-top:10px;">
                 <li>Unlimited Active Nodes</li>
-                <li>Custom Branded Slugs</li>
-                <li>Priority Node Deployment</li>
-                <li>Advanced Analytics Dashboard</li>
+                <li>Custom Branded Slugs (VIP)</li>
+                <li>Global Analytics Dashboard</li>
+                <li>Priority Deployment Speeds</li>
             </ul>
         </div>''', unsafe_allow_html=True)
     
-    # --- THIS IS THE EXACT BUY ME A COFFEE REDIRECT ---
     if not user_db_data['is_premium']:
-        st.markdown("""
+        # THE BIG CARD PAYMENT BUTTON
+        st.markdown(f"""
             <a href="https://www.buymeacoffee.com/lynxis.ai/membership" target="_blank" style="text-decoration:none;">
                 <div style="
-                    background: linear-gradient(45deg, #FFDD00 0%, #FBB03B 100%);
-                    color: black;
+                    background: #ffffff;
+                    color: #000000;
                     text-align: center;
-                    padding: 15px;
-                    border-radius: 14px;
+                    padding: 20px;
+                    border-radius: 16px;
                     font-weight: 900;
-                    font-size: 18px;
-                    margin-top: 20px;
-                    box-shadow: 0 4px 15px rgba(255, 221, 0, 0.3);
+                    font-size: 22px;
+                    margin-top: 30px;
+                    cursor: pointer;
+                    border: 2px solid #ffffff;
+                    transition: 0.3s;
+                    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
                 ">
-                    ⚡ UPGRADE TO VIP VIA CARD PAYMENT
+                    💳 PAY VIA CARD PAYMENT
                 </div>
             </a>
+            <p style="text-align:center; color:gray; font-size:12px; margin-top:10px;">
+                Secure payment processed via Buy Me a Coffee Gateway
+            </p>
         """, unsafe_allow_html=True)
     else:
-        st.success("✨ Your VIP status is active. Infrastructure running at 100% capacity.")
+        st.success("✨ LYNXIS VIP PROTOCOL ACTIVE")
