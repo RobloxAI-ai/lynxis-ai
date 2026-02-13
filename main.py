@@ -261,3 +261,43 @@ elif menu == "Upgrade ⚡":
     )
     
     st.caption("Secure payment processed via Buy Me a Coffee Gateway")
+# --- 7. LEGAL FOOTER & COMPLIANCE ---
+st.markdown("---") # Visual break before the footer
+
+legal_footer = """
+<style>
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: rgba(10, 10, 15, 0.9);
+        color: #555;
+        text-align: center;
+        padding: 10px;
+        font-size: 12px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        z-index: 100;
+    }
+    .footer a {
+        color: #4facfe;
+        text-decoration: none;
+        margin: 0 10px;
+    }
+</style>
+<div class="footer">
+    <span>© 2026 LYNXIS INFRASTRUCTURE</span>
+    <a href="#terms">Terms of Service</a> | 
+    <a href="#privacy">Privacy Policy</a> | 
+    <a href="mailto:dali.snouda@gmail.com">Contact Support</a>
+    <br>
+    <span style="font-size:10px; opacity:0.6;">
+        LYNXIS is a URL management tool. We are not responsible for the content of external links.
+    </span>
+</div>
+"""
+st.markdown(legal_footer, unsafe_allow_html=True)
+
+# Simple Legal Pop-ups (If they click the links)
+if st.query_params.get("view") == "terms":
+    st.info("### Terms of Service: LYNXIS is for lawful use only. Users are responsible for all redirected content.")
