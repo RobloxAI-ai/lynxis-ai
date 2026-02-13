@@ -59,27 +59,29 @@ supabase = init_db()
 query_params = st.query_params
 if "c" in query_params:
     target_slug = query_params["c"]
-    # FIXED: Table target 'links' and Column 'short_code'
     response = supabase.table("links").select("original_url, clicks").eq("short_code", target_slug).execute()
     
     if response.data:
         node = response.data[0]
         target_url = node["original_url"]
-        # Ensure URL is valid
+        
         if not target_url.startswith(("http://", "https://")):
             target_url = "https://" + target_url
             
         new_clicks = (node.get("clicks") or 0) + 1
         supabase.table("links").update({"clicks": new_clicks}).eq("short_code", target_slug).execute()
         
-       # JUMP TO DESTINATION (Security Bypass Version)
-st.markdown(f"""
-    <script>
-        window.parent.location.href = "{target_url}";
-    </script>
-""", unsafe_allow_html=True)
-st.write(f"✨ Breaking through to: {target_slug}...")
-st.stop()
+        # --- THIS IS THE PART THAT CRASHED ---
+        # Make sure the st.markdown and the triple quotes are exactly like this:
+        st.markdown(f"""
+            <script>
+                window.parent.location.href = "{target_url}";
+            </script>
+        """, unsafe_allow_html=True)
+        st.write(f"✨ Breaking through to: {target_slug}...")
+        st.stop()
+    else:
+        st.error("Invalid Node! This link doesn't exist.")
 # --- 4. UNIVERSAL IDENTITY GATEKEEPER ---
 u_logged_in = False
 u_email = ""
