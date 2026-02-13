@@ -219,7 +219,7 @@ elif menu == "Upgrade ⚡":
     
     # --- DUAL TOGGLE LOGIC ---
     plan_type = st.radio("SELECT BILLING CYCLE", ["Monthly", "Yearly (Save 20%)"], horizontal=True)
-    price = "29" if "Monthly" in plan_type else "279" # Adjusted for yearly discount
+    price = "29" if "Monthly" in plan_type else "279"
     period = "mo" if "Monthly" in plan_type else "yr"
 
     col1, col2 = st.columns(2)
@@ -249,30 +249,33 @@ elif menu == "Upgrade ⚡":
             </ul>
         </div>''', unsafe_allow_html=True)
     
+    # --- THE MISSING LINK BUTTON ---
     if not user_db_data['is_premium']:
-        # THE BIG CARD PAYMENT BUTTON
+        st.write("") # Spacing
         st.markdown(f"""
-            <a href="https://www.buymeacoffee.com/lynxis.ai/membership" target="_blank" style="text-decoration:none;">
-                <div style="
-                    background: #ffffff;
-                    color: #000000;
-                    text-align: center;
-                    padding: 20px;
-                    border-radius: 16px;
-                    font-weight: 900;
-                    font-size: 22px;
-                    margin-top: 30px;
-                    cursor: pointer;
-                    border: 2px solid #ffffff;
-                    transition: 0.3s;
-                    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-                ">
-                    💳 PAY VIA CARD PAYMENT
-                </div>
-            </a>
-            <p style="text-align:center; color:gray; font-size:12px; margin-top:10px;">
-                Secure payment processed via Buy Me a Coffee Gateway
+            <div style="display: flex; justify-content: center; margin-top: 30px;">
+                <a href="https://www.buymeacoffee.com/lynxis.ai/membership" target="_blank" style="text-decoration: none; width: 100%;">
+                    <div style="
+                        background: #ffffff;
+                        color: #000000;
+                        text-align: center;
+                        padding: 22px;
+                        border-radius: 16px;
+                        font-weight: 900;
+                        font-size: 24px;
+                        border: 2px solid #ffffff;
+                        box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+                        transition: transform 0.2s ease;
+                    ">
+                        💳 PAY VIA CARD PAYMENT
+                    </div>
+                </a>
+            </div>
+            <p style="text-align:center; color:gray; font-size:13px; margin-top:15px; opacity: 0.7;">
+                Redirecting to secure Buy Me a Coffee checkout...
             </p>
         """, unsafe_allow_html=True)
     else:
-        st.success("✨ LYNXIS VIP PROTOCOL ACTIVE")
+        st.markdown('<div class="glass-card" style="text-align:center; border-color:#00f2fe;">', unsafe_allow_html=True)
+        st.success("✨ LYNXIS VIP PROTOCOL ACTIVE - ALL SYSTEMS GO")
+        st.markdown('</div>', unsafe_allow_html=True)
