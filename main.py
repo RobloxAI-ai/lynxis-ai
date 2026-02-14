@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 
 st.set_page_config(
     page_title="LYNXIS AI | URL Infrastructure",
-    page_icon="🚀",
+    page_icon="",
     layout="wide"
 )
 
@@ -124,11 +124,11 @@ try:
 except:
     pass
 
-# 2. Force login for the owner (You) if testing locally
+# 2. Force login for Owner (Local Testing)
 if "localhost" in str(st.context.headers.get("host", "")):
     u_email, u_name, u_logged_in = "dali.snouda@gmail.com", "Dali (Owner)", True
 
-# 3. If not logged in, show login screen and STOP
+# 3. If not logged in, show login screen
 if not u_logged_in:
     st.markdown("<div style='height:10vh;'></div><h1 class='hero-title'>LYNXIS</h1>", unsafe_allow_html=True)
     _, col, _ = st.columns([1, 1.5, 1])
@@ -141,11 +141,12 @@ if not u_logged_in:
         st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-# 4. NOW that we have a real email, check the blacklist
+# 4. BLACKLIST CHECK (The Wall)
 ban_check = supabase.table("banned_users").select("*").eq("email", u_email).execute()
 if ban_check.data:
-    st.error("🚨 ACCESS DENIED: Your account has been blacklisted for violating security protocols.")
-    st.info(f"Reason: {ban_check.data[0].get('reason', 'No reason provided.')}")
+    st.error("🚨 ACCESS DENIED: This account has been blacklisted.")
+    st.info(f"Reason: {ban_check.data[0].get('reason', 'Violation of safety protocols.')}")
+    st.markdown(f"**Appeal:** Contact [ai.websno@gmail.com](mailto:ai.websno@gmail.com) if you believe this is an error.")
     st.stop()
 
 # --- 5. DATA SYNC & USER STATE ---
@@ -166,7 +167,9 @@ with st.sidebar:
     if is_admin: nav.append("Admin Master Control")
     menu = st.radio("GATEWAY", nav)
     if st.button("Secure Logout"): st.logout()
-
+    st.divider()
+    contact_url = f"mailto:ai.websno@gmail.com?subject=LYNXIS Support Request: {u_email}"
+    st.link_button("INFRASTRUCTURE SUPPORT", contact_url, use_container_width=True)
 # --- 7. DASHBOARD ---
 if menu == "Dashboard":
 # Display Credit Status
