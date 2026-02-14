@@ -111,23 +111,24 @@ u_logged_in = False
 u_email = ""
 u_name = "User"
 
-# Try every possible version of the Streamlit User command
+# 1. Identify the user
 try:
     if hasattr(st, "user") and st.user.get("is_logged_in"):
         u_logged_in = True
-        u_email = st.user.get("email", "").lower()
+        u_email = st.user.get("email", "").lower().strip()
         u_name = st.user.get("name", "User")
     elif hasattr(st, "experimental_user") and st.experimental_user.get("is_logged_in"):
         u_logged_in = True
-        u_email = st.experimental_user.get("email", "").lower()
+        u_email = st.experimental_user.get("email", "").lower().strip()
         u_name = st.experimental_user.get("name", "User")
 except:
     pass
 
-# Force login for the owner (You) if testing locally
+# 2. Force login for the owner (You) if testing locally
 if "localhost" in str(st.context.headers.get("host", "")):
     u_email, u_name, u_logged_in = "dali.snouda@gmail.com", "Dali (Owner)", True
 
+# 3. If not logged in, show login screen and STOP
 if not u_logged_in:
     st.markdown("<div style='height:10vh;'></div><h1 class='hero-title'>LYNXIS</h1>", unsafe_allow_html=True)
     _, col, _ = st.columns([1, 1.5, 1])
@@ -138,6 +139,13 @@ if not u_logged_in:
         if st.button("AUTHENTICATE WITH GOOGLE", use_container_width=True, disabled=not agree):
             st.login()
         st.markdown('</div>', unsafe_allow_html=True)
+    st.stop()
+
+# 4. NOW that we have a real email, check the blacklist
+ban_check = supabase.table("banned_users").select("*").eq("email", u_email).execute()
+if ban_check.data:
+    st.error("🚨 ACCESS DENIED: Your account has been blacklisted for violating security protocols.")
+    st.info(f"Reason: {ban_check.data[0].get('reason', 'No reason provided.')}")
     st.stop()
 
 # --- 5. DATA SYNC & USER STATE ---
@@ -262,7 +270,26 @@ elif menu == "Admin Master Control" and is_admin:
             st.success(f"Yearly VIP activated for {t_email}")
             time.sleep(1); st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
-
+    # --- 🛡️ BAN HAMMER (NEW) ---
+    st.divider()
+    st.subheader("🚫 BLACKLIST INFRASTRUCTURE")
+    
+    ban_email = st.text_input("Email to Permanently Ban", placeholder="troublemaker@example.com")
+    ban_reason = st.text_input("Reason for Ban")
+    
+    if st.button("EXECUTE PERMANENT BAN"):
+        if ban_email:
+            # Add to banned table
+            supabase.table("banned_users").insert({
+                "email": ban_email.lower().strip(),
+                "reason": ban_reason
+            }).execute()
+            
+            # Delete their existing links immediately
+            supabase.table("links").delete().eq("user_email", ban_email.lower().strip()).execute()
+            
+            st.error(f"User {ban_email} has been purged and blacklisted.")
+            time.sleep(1); st.rerun()
     # --- USER REGISTRY TABLE ---
     st.subheader("Full User Registry")
     if users_list:
