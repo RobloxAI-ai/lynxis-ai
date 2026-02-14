@@ -207,16 +207,67 @@ elif menu == "Analytics":
         st.metric("Total Hits", df['clicks'].sum())
         st.markdown('</div>', unsafe_allow_html=True)
 
-# --- 9. ADMIN MASTER CONTROL ---
+# --- 8. ADMIN MASTER CONTROL (The God View) ---
 elif menu == "Admin Master Control" and is_admin:
     st.markdown("<h1 class='hero-title'>GOD MODE</h1>", unsafe_allow_html=True)
-    pending = supabase.table("users").select("*").eq("pending_upgrade", True).execute()
-    st.subheader("Pending VIP Requests")
-    if pending.data: st.write(pd.DataFrame(pending.data))
-    t_email = st.text_input("User Email")
-    if st.button("ACTIVATE VIP"):
-        supabase.table("users").update({"is_premium": True, "credits": 9999, "pending_upgrade": False}).eq("email", t_email).execute()
-        st.success("User Elevated to VIP.")
+    
+    # --- USER ANALYTICS ---
+    all_users_res = supabase.table("users").select("*").execute()
+    users_list = all_users_res.data if all_users_res.data else []
+    
+    # Stats Row
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Total Registered Users", len(users_list))
+    c2.metric("VIP Operators", len([u for u in users_list if u.get('is_premium')]))
+    c3.metric("Standard Users", len([u for u in users_list if not u.get('is_premium')]))
+    
+    # --- MANUAL VIP ELEVATION ---
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.subheader("Manual VIP Elevation")
+    t_email = st.text_input("Target User Email", placeholder="user@example.com")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("➕ ACTIVATE MONTHLY (30 Days)", use_container_width=True):
+            expiry = datetime.now(timezone.utc) + timedelta(days=30)
+            supabase.table("users").update({
+                "is_premium": True, "credits": 9999, "subscription_end": expiry.isoformat()
+            }).eq("email", t_email.lower().strip()).execute()
+            st.success(f"Monthly VIP activated for {t_email}")
+            time.sleep(1); st.rerun()
+
+    with col2:
+        if st.button("➕ ACTIVATE YEARLY (365 Days)", use_container_width=True):
+            expiry = datetime.now(timezone.utc) + timedelta(days=365)
+            supabase.table("users").update({
+                "is_premium": True, "credits": 9999, "subscription_end": expiry.isoformat()
+            }).eq("email", t_email.lower().strip()).execute()
+            st.success(f"Yearly VIP activated for {t_email}")
+            time.sleep(1); st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # --- USER REGISTRY TABLE ---
+    st.subheader("Full User Registry")
+    if users_list:
+        df_users = pd.DataFrame(users_list)
+        # Cleaning up columns for display
+        display_df = df_users[['email', 'name', 'is_premium', 'credits', 'subscription_end']]
+        st.dataframe(display_df, use_container_width=True)
+    else:
+        st.info("No users have registered with the infrastructure yet.")
+
+    # --- SECURITY OVERLOOK (Node Monitor) ---
+    st.divider()
+    st.subheader("🛡️ GLOBAL NODE MONITOR")
+    all_links = supabase.table("links").select("*").order("created_at", desc=True).execute()
+    if all_links.data:
+        for link in all_links.data:
+            with st.expander(f"NODE: {link['short_code']} | Creator: {link['user_email']}"):
+                st.write(f"**Target URL:** {link['original_url']}")
+                st.write(f"**Clicks:** {link['clicks']}")
+                if st.button(f"TERMINATE {link['short_code']}", key=f"kill_{link['short_code']}"):
+                    supabase.table("links").delete().eq("short_code", link['short_code']).execute()
+                    st.rerun()
 # --- RESTORE: SETTINGS & UPGRADE ---
 elif menu == "Settings":
     st.markdown("<h1 class='hero-title'>SETTINGS</h1>", unsafe_allow_html=True)
