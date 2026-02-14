@@ -161,6 +161,23 @@ with st.sidebar:
 
 # --- 7. DASHBOARD ---
 if menu == "Dashboard":
+# Display Credit Status
+    if not user_db_data['is_premium']:
+        st.info(f"⚡ **Infrastructure Credits:** {user_db_data['credits']} nodes remaining.")
+    else:
+        st.success("💎 **VIP Access:** Unlimited Node Deployment Active.")
+    # SECURITY: Auto-Expire Check
+    if user_db_data.get('subscription_end'):
+        expiry_dt = datetime.fromisoformat(user_db_data['subscription_end'])
+        if datetime.now(timezone.utc) > expiry_dt:
+            # Time is up! 
+            supabase.table("users").update({
+                "is_premium": False, 
+                "credits": 0, 
+                "subscription_end": None
+            }).eq("email", u_email).execute()
+            st.warning("⚠️ Your VIP period has ended. Access reverted to Standard.")
+            st.rerun()
     st.markdown("<h1 class='hero-title'>ENGINE ROOM</h1>", unsafe_allow_html=True)
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     can_deploy = user_db_data['is_premium'] or (user_db_data['credits'] > 0)
